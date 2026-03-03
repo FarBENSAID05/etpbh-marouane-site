@@ -1,0 +1,45 @@
+{
+  "Nav": {
+    "services": "Services",
+    "projects": "Réalisations",
+    "contact": "Contact"
+  },
+  "Home": {
+    "kicker": "ETPBH MAROUANE",
+    "headline": "Travaux publics • Location d’engins • Levage • Transport",
+    "tagline": "Fiabilité • Sécurité • Performance",
+    "cta": "Demander un devis",
+    "ctaSecondary": "Voir nos services",
+
+    "stat1Label": "Disponibilité",
+    "stat1Value": "24/7 sur demande",
+    "stat2Label": "Zone",
+    "stat2Value": "Alger + wilayas",
+
+    "panelTitle": "Une équipe orientée résultats",
+    "panelDesc": "Un service professionnel, des délais maîtrisés et du matériel adapté.",
+    "panelItem1": "Devis rapide & clair",
+    "panelItem2": "Suivi de chantier",
+    "panelItem3": "Sécurité & conformité",
+
+    "servicesTitle": "Nos services",
+    "servicesDesc": "Des solutions complètes pour vos chantiers et besoins logistiques.",
+    "service1Title": "Travaux publics",
+    "service1Desc": "Terrassement, VRD, chantiers.",
+    "service2Title": "Location d’engins",
+    "service2Desc": "Engins & matériel selon besoin.",
+    "service3Title": "Levage",
+    "service3Desc": "Grutage, manutention, sécurité.",
+    "service4Title": "Transport",
+    "service4Desc": "Transport de matériel & logistique.",
+
+    "quoteTitle": "Demande de devis",
+    "quoteDesc": "Remplissez ce formulaire, on vous répond rapidement.",
+    "phName": "Nom & prénom",
+    "phPhone": "Téléphone",
+    "phService": "Service demandé (TP, location, levage, transport...)",
+    "phDetails": "Détails (lieu, dates, quantités...)",
+    "send": "Envoyer",
+    "footer": "© ETPBH MAROUANE — Tous droits réservés."
+  }
+}

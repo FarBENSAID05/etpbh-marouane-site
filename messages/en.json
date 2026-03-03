@@ -1,0 +1,45 @@
+{
+  "Nav": {
+    "services": "Services",
+    "projects": "Projects",
+    "contact": "Contact"
+  },
+  "Home": {
+    "kicker": "ETPBH MAROUANE",
+    "headline": "Public works • Equipment rental • Lifting • Transport",
+    "tagline": "Reliability • Safety • Performance",
+    "cta": "Request a quote",
+    "ctaSecondary": "Explore services",
+
+    "stat1Label": "Availability",
+    "stat1Value": "24/7 on request",
+    "stat2Label": "Coverage",
+    "stat2Value": "Algiers + regions",
+
+    "panelTitle": "Results-driven team",
+    "panelDesc": "Professional service, controlled timelines, and the right equipment.",
+    "panelItem1": "Fast & clear quotes",
+    "panelItem2": "Project follow-up",
+    "panelItem3": "Safety & compliance",
+
+    "servicesTitle": "Our services",
+    "servicesDesc": "Complete solutions for construction and logistics needs.",
+    "service1Title": "Public works",
+    "service1Desc": "Earthworks, roadworks, sites.",
+    "service2Title": "Equipment rental",
+    "service2Desc": "Machines and tools as needed.",
+    "service3Title": "Lifting",
+    "service3Desc": "Cranes, handling, safety.",
+    "service4Title": "Transport",
+    "service4Desc": "Material transport & logistics.",
+
+    "quoteTitle": "Quote request",
+    "quoteDesc": "Fill the form and we’ll get back quickly.",
+    "phName": "Full name",
+    "phPhone": "Phone number",
+    "phService": "Service (works, rental, lifting, transport...)",
+    "phDetails": "Details (location, dates, quantities...)",
+    "send": "Send",
+    "footer": "© ETPBH MAROUANE — All rights reserved."
+  }
+}

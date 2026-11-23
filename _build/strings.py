@@ -219,3 +219,45 @@ T = {
  "home":"Home","notfound_h":"Page not found","notfound_p":"The page you requested does not exist or has moved.",
 },
 }
+
+# --- Médias (vidéo d'ambiance, photos de chantiers en Algérie) ---
+MEDIA = {
+ "fr": {
+  "gal_k":"Sur le terrain","gal_h":"Les chantiers routiers en Algérie",
+  "gal_p":"Viaducs, terrassements, transferts d'engins : le type de chantier pour lequel nous mobilisons grues, porte-engins, bennes et pelles.",
+  "caps":{"gal-viaduc-chiffa":"Viaduc autoroutier en construction — Benchicao (Médéa)","gal-poutres":"Pose des poutres à la poutre de lancement — Médéa",
+          "gal-porte-engins":"Porte-engins et dumper sur un chantier routier — Mahelma (Alger)","gal-terrassement-mahelma":"Terrassement à la pelle hydraulique — Mahelma (Alger)",
+          "gal-viaduc-medea":"Tablier de viaduc et poutre de lancement — Médéa","gal-talus-medea":"Talus et chaussée de l'autoroute — Benchicao (Médéa)"},
+  "note":"Photos d'illustration de chantiers en Algérie, publiées sur Wikimedia Commons par habib kaki (domaine public et licence CC BY 3.0) ; elles ne montrent pas le matériel d'ETPBH MAROUANE. Vidéo et photos d'engins : Pexels.",
+  "credits":"Crédits photos","video_alt":"Vidéo d'ambiance : engins de travaux publics sur chantier",
+ },
+ "ar": {
+  "gal_k":"في الميدان","gal_h":"ورشات الطرق في الجزائر",
+  "gal_p":"جسور، أشغال حفر وتسوية، نقل الآليات: هذا هو نوع الورشات التي نعبّئ لها الرافعات وناقلات الآليات والقلابات والحفارات.",
+  "caps":{"gal-viaduc-chiffa":"جسر طريق سيار قيد الإنجاز — بن شكاو (المدية)","gal-poutres":"تركيب الروافد بآلة الإطلاق — المدية",
+          "gal-porte-engins":"ناقلة آليات وقلابة في ورشة طريق — المعالمة (الجزائر)","gal-terrassement-mahelma":"أشغال حفر بالحفارة الهيدروليكية — المعالمة (الجزائر)",
+          "gal-viaduc-medea":"سطح جسر وآلة إطلاق الروافد — المدية","gal-talus-medea":"منحدرات وطريق سيار قيد الإنجاز — بن شكاو (المدية)"},
+  "note":"صور توضيحية لورشات في الجزائر نشرها habib kaki على Wikimedia Commons (ملكية عامة ورخصة CC BY 3.0)، ولا تمثّل عتاد ETPBH MAROUANE. الفيديو وصور الآليات: Pexels.",
+  "credits":"مصادر الصور","video_alt":"فيديو توضيحي: آليات أشغال عمومية في ورشة",
+ },
+ "en": {
+  "gal_k":"In the field","gal_h":"Road construction sites in Algeria",
+  "gal_p":"Viaducts, earthworks, machine transfers: the kind of project we supply with cranes, lowbeds, dump trucks and excavators.",
+  "caps":{"gal-viaduc-chiffa":"Motorway viaduct under construction — Benchicao (Médéa)","gal-poutres":"Beam launching gantry at work — Médéa",
+          "gal-porte-engins":"Lowbed and dumper on a road site — Mahelma (Algiers)","gal-terrassement-mahelma":"Excavator earthworks — Mahelma (Algiers)",
+          "gal-viaduc-medea":"Viaduct deck and launching gantry — Médéa","gal-talus-medea":"Motorway embankments and carriageway — Benchicao (Médéa)"},
+  "note":"Illustrative photos of construction sites in Algeria, published on Wikimedia Commons by habib kaki (public domain and CC BY 3.0); they do not show ETPBH MAROUANE's equipment. Video and equipment photos: Pexels.",
+  "credits":"Photo credits","video_alt":"Background video: civil-works machines on site",
+ },
+}
+GALLERY = ["gal-viaduc-chiffa","gal-poutres","gal-porte-engins","gal-terrassement-mahelma","gal-viaduc-medea","gal-talus-medea"]
+SVC_IMG = ["parc/levage-grue-at","parc/terr-pelles-rangee","parc/beton-malaxeurs-rangee","parc/transport-bennes","svc-tp","svc-operateur"]
+WM = "https://commons.wikimedia.org/wiki/File:"
+PHOTO_CREDITS = [
+ ("Benchicao - l'assistance (24673339538 / 26769943899 / 38514352512 / 37773736414)", WM+"Benchicao_-_l%27assistance_%D8%A8%D9%86_%D8%B4%D9%83%D8%A7%D9%88_-_%D9%84%D8%A7%D8%B3%D9%8A%D8%B3%D8%AA%D9%88%D9%86%D8%B3_(26769943899).jpg", "habib kaki", "Domaine public / Public domain", None),
+ ("Benchicao l'assistance (37601886225 / 37601897675)", WM+"Benchicao_l%27assistance_%D8%A8%D9%86_%D8%B4%D9%83%D8%A7%D9%88_%D9%84%D8%A7%D8%B3%D9%8A%D8%B3%D8%AA%D9%88%D9%86%D8%B3_(37601897675).jpg", "habib kaki", "Domaine public / Public domain", None),
+ ("Chantier Sud-Coréen à Mahelma", WM+"Chantier_Sud-Cor%C3%A9en_%C3%A0_Mahelma_-_panoramio.jpg", "habib kaki", "CC BY 3.0", "https://creativecommons.org/licenses/by/3.0/"),
+ ("Chantier Sud-Coréen (Mahelma)", WM+"Chantier_Sud-Cor%C3%A9en_%D9%88%D8%B1%D8%B4%D8%A9_%D9%83%D9%88%D8%B1%D9%8A%D8%A9_%D8%A8%D8%A7%D9%84%D9%85%D8%B9%D8%A7%D9%84%D9%85%D8%A9_-_panoramio.jpg", "habib kaki", "CC BY 3.0", "https://creativecommons.org/licenses/by/3.0/"),
+ ("Chantier Sud-Coréen", WM+"Chantier_Sud-Cor%C3%A9en_-_panoramio.jpg", "habib kaki", "CC BY 3.0", "https://creativecommons.org/licenses/by/3.0/"),
+ ("Vidéos et photos d'engins : Pexels (pexels.com/license)", "https://www.pexels.com/license/", "Pexels", "Licence Pexels", None),
+]

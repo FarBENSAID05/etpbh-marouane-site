@@ -3,7 +3,8 @@
 Usage :  python build_site.py <dossier_sortie>
 Le dossier de sortie est le dépôt Git déployé par Hostinger dans public_html."""
 import sys, os, hashlib, html, datetime
-from strings import T
+from strings import T, MEDIA, GALLERY, SVC_IMG, PHOTO_CREDITS
+from families import F, FAM_KEYS, FAM_ORDER, FAM_ICON, FAM_GAL, FAM_ACQ
 from data import *
 
 OUT = sys.argv[1] if len(sys.argv) > 1 else os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "public_html")
@@ -86,16 +87,15 @@ def head(lang, page, title, desc):
 
 def header(lang, page):
     t = T[lang]; d = depth(lang)
-    home = "index.html" if page == "materiel.html" else ""
-    links = []
-    for href, label in t["nav"]:
-        if href.startswith("#"):
-            h = (f"{home or './'}{href}" if page == "materiel.html" else href)
-            if page == "materiel.html": h = f"./{href}"
-            links.append(f'<a href="{h}">{e(label)}</a>')
-        else:
-            cur = ' aria-current="page"' if page == href else ""
-            links.append(f'<a href="{href}"{cur}>{e(label)}</a>')
+    f = F[lang]
+    pre = "" if page == "" else "./"
+    def cur(x): return ' aria-current="page"' if page == x else ""
+    fam_links = "".join(f'<a href="{k}.html"{cur(k+".html")}>{e(f["fam"][k]["short"])}</a>' for k in FAM_ORDER)
+    links = [f'<div class="dd"><button class="dd-b" type="button" aria-haspopup="true">{e(f["menu"])} <span aria-hidden="true">▾</span></button><div class="dd-m">{fam_links}<a href="materiel.html"{cur("materiel.html")}>{e(f["all"])}</a></div></div>',
+             f'<a href="{pre}#services">{e(t["nav"][0][1])}</a>',
+             f'<a href="{pre}#references">{e(t["nav"][2][1])}</a>',
+             f'<a href="qualification.html"{cur("qualification.html")}>{e(f["qualif_nav"])}</a>',
+             f'<a href="{pre}#contact">{e(t["nav"][4][1])}</a>']
     langs = []
     for l in LANGS:
         target = d + T[l]["prefix"] + (page or "")
@@ -113,7 +113,10 @@ def header(lang, page):
 
 def footer(lang, page):
     t = T[lang]; d = depth(lang)
-    nav = "".join(f'<li><a href="{("./" if page=="materiel.html" and h.startswith("#") else "")+h}">{e(l)}</a></li>' for h, l in t["nav"])
+    f = F[lang]
+    nav = "".join(f'<li><a href="{k}.html">{e(f["fam"][k]["t"])}</a></li>' for k in FAM_ORDER)
+    nav += f'<li><a href="materiel.html">{e(f["all"])}</a></li><li><a href="qualification.html">{e(f["qualif_nav"])}</a></li>'
+    nav += f'<li><a href="{"" if page=="" else "./"}#contact">{e(t["nav"][4][1])}</a></li>'
     return f'''<footer class="ftr"><div class="wrap">
 <div class="cols">
 <div><span class="logo-w"><img src="{d}assets/img/logo-260.png" width="260" height="144" alt="ETPBH MAROUANE"></span><p>{e(t['ft_about'])}</p></div>
@@ -129,14 +132,16 @@ def footer(lang, page):
 <script src="{d}assets/js/site.js?v={ver('assets/js/site.js')}" defer></script>
 </body></html>'''
 
+CARD_LINK = {"crane":"levage.html","dig":"terrassement.html","mixer":"beton.html","truck":"transport.html","road":"qualification.html","shield":"materiel.html"}
+
 def maplink(q):
     import urllib.parse
     return "https://www.openstreetmap.org/search?query=" + urllib.parse.quote(q)
 
 def home(lang):
-    t = T[lang]
+    t = T[lang]; m = MEDIA[lang]; d = depth(lang)
     stats = "".join(f'<li><b class="num">{v}</b><span>{e(l)}</span></li>' for v, l in t["stats"])
-    svc = "".join(f'''<article class="card"><div class="ico">{icon(k)}</div><h3>{e(h)}</h3><p>{e(p)}</p><ul>{"".join(f"<li>{e(x)}</li>" for x in li)}</ul></article>''' for k, h, p, li in t["svc"])
+    svc = "".join(f'''<article class="card has-img"><img class="card-img" src="{d}assets/media/{img}.webp" width="800" height="500" alt="" loading="lazy" decoding="async"><div class="ico">{icon(k)}</div><h3>{e(h)}</h3><p>{e(p)}</p><ul>{"".join(f"<li>{e(x)}</li>" for x in li)}</ul><a class="card-link" href="{CARD_LINK[k]}">{e(F[lang]["see"] if k not in ("road",) else F[lang]["qualif_nav"])} →</a></article>''' for (k, h, p, li), img in zip(t["svc"], SVC_IMG))
     how = "".join(f'<div class="step"><h3>{e(h)}</h3><p>{e(p)}</p></div>' for h, p in t["how"])
     refm = "".join(f'<div class="proj"><b>{e(n)}</b><span>{e(p)}</span></div>' for n, p in t["ref_main"])
     refn = "".join(f'<li><b>{e(n)}</b><span>{e(p)}</span></li>' for n, p in t["ref_nat"])
@@ -147,9 +152,11 @@ def home(lang):
     f = t["f"]
     opts = "".join(f"<option>{e(o)}</option>" for o in t["f_opts"])
     data_attrs = f'data-title="{e(t["f_title"])}" ' + " ".join(f'data-l{k}="{e(v)}"' for k, v in [("nom",f["nom"]),("soc",f["societe"]),("tel",f["tel"]),("besoin",f["besoin"]),("lieu",f["lieu"]),("duree",f["duree"]),("details",f["details"])])
+    gal = "".join(f'<figure class="gal-it"><img src="{d}assets/media/{g}.webp" width="1200" height="750" alt="{e(m["caps"][g])}" loading="lazy" decoding="async"><figcaption>{e(m["caps"][g])}</figcaption></figure>' for g in GALLERY)
+    creds = "".join(f'<li><a href="{u}" rel="noopener" target="_blank">{e(n)}</a> — {e(a)} — ' + (f'<a href="{lu}" rel="noopener" target="_blank">{e(l)}</a>' if lu else e(l)) + '</li>' for n, u, a, l, lu in PHOTO_CREDITS)
     body = f'''{header(lang,"")}
 <main id="main">
-<section class="hero"><div class="wrap">
+<section class="hero"><video class="hero-vid" autoplay muted loop playsinline preload="metadata" poster="{d}assets/media/hero-poster.jpg" aria-label="{e(MEDIA[lang]['video_alt'])}"><source src="{d}assets/media/hero-480.mp4" type="video/mp4" media="(max-width: 700px)"><source src="{d}assets/media/hero-720.mp4" type="video/mp4"></video><div class="wrap">
 <span class="tag">{e(t['tag'])}</span>
 <h1>{t['h1']}</h1>
 <p class="lead">{e(t['lead'])}</p>
@@ -179,12 +186,19 @@ def home(lang):
 <div><h3>{e(t['ref_nat_t'])}</h3><ul class="ref-list">{refn}</ul></div></div>
 </div></section>
 
-<section id="qualification"><div class="wrap">
+<section id="terrain"><div class="wrap">
+<div class="sec-head"><span class="kicker">{e(m['gal_k'])}</span><h2>{e(m['gal_h'])}</h2><p>{e(m['gal_p'])}</p></div>
+<div class="gal">{gal}</div>
+<p class="gal-note">{e(m['note'])}</p>
+<details class="credits"><summary>{e(m['credits'])}</summary><ul>{creds}</ul></details>
+</div></section>
+
+<section class="sec-alt" id="qualification"><div class="wrap">
 <div class="sec-head"><span class="kicker">{e(t['q_k'])}</span><h2>{e(t['q_h'])}</h2><p>{e(t['q_p'])}</p><div class="badges">{badges}</div></div>
 <div class="loc">{qcards}</div>
 </div></section>
 
-<section class="sec-alt" id="contact"><div class="wrap contact">
+<section id="contact"><div class="wrap contact">
 <div><span class="kicker">{e(t['c_k'])}</span><h2>{e(t['c_h'])}</h2><p>{e(t['c_p'])}</p>
 <ul class="c-list">
 <li>{icon('phone')}<div>{e(t['c_tel'])}<br><a href="tel:{PHONE_INTL}" class="num">{PHONE}</a></div></li>
@@ -226,7 +240,7 @@ def materiel(lang):
     th = lambda hs: "".join(f'<th scope="col">{e(h)}</th>' for h in hs)
     body = f'''{header(lang,"materiel.html")}
 <main id="main">
-<section class="page-hero" style="padding:56px 0 48px"><div class="wrap"><span class="kicker" style="color:var(--amber)">{e(t['fleet_k'])}</span><h1>{e(t['mat_h1'])}</h1><p>{e(t['mat_lead'])}</p></div></section>
+<section class="page-hero has-bg" style="padding:56px 0 48px;background-image:linear-gradient(90deg,rgba(23,24,23,.92),rgba(23,24,23,.65)),url({depth(lang)}assets/media/mat-banner.webp)"><div class="wrap"><span class="kicker" style="color:var(--amber)">{e(t['fleet_k'])}</span><h1>{e(t['mat_h1'])}</h1><p>{e(t['mat_lead'])}</p></div></section>
 <section><div class="wrap">
 <div class="fleet-sec"><div class="fleet-h"><div><h2>{e(t['A_h'])}</h2><p>{e(t['A_p'])}</p></div></div>
 <table class="tbl"><thead><tr>{th(thA)}</tr></thead><tbody>{''.join(rowsA)}</tbody></table>
@@ -243,6 +257,89 @@ def materiel(lang):
 {footer(lang,"materiel.html")}'''
     return head(lang, "materiel.html", t["title_mat"], t["desc_mat"]) + "\n" + body
 
+
+def fam_page(lang, k):
+    t = T[lang]; f = F[lang]; fm = f["fam"][k]; li = LANGS.index(lang); d = depth(lang); page = k + ".html"
+    keys = FAM_KEYS[k]
+    own = [r for r in PARC if r[0] in keys["parc"]]
+    mob = [r for r in MOBIL if r[0] in keys["mobil"]]
+    acq = FAM_ACQ[k]
+    n_own = len(own); n_mob = sum(r[2] for r in mob); n_acq = sum(a[0] for a in acq)
+    stats = f'<li><b class="num">{n_own}</b><span>{e(f["units_own"])}</span></li>'
+    if n_mob: stats += f'<li><b class="num">{n_mob}</b><span>{e(f["units_mob"])}</span></li>'
+    stats += f'<li><b class="num">{n_acq}</b><span>{e(f["units_acq"])}</span></li>'
+    stats += f'<li><b class="num">{t["stats"][2][0]}</b><span>{e(t["stats"][2][1])}</span></li>'
+    # group own units by (designation, model)
+    groups = {}
+    for (kk, mk, md, ch, yr, st) in own:
+        g = groups.setdefault((kk, mk, md, ch), {"n":0,"years":set(),"st":set()}); g["n"] += 1; g["years"].add(yr); g["st"].add(st)
+    cards = ""
+    for (kk, mk, md, ch), g in groups.items():
+        yrs = sorted(g["years"]); ytxt = str(yrs[0]) if len(yrs)==1 else f"{yrs[0]}–{yrs[-1]}"
+        pill = f'<span class="pill">{e(t["st_ok"])}</span>' if g["st"] == {"ok"} else f'<span class="pill wait">{e(t["st_enc"])}</span>'
+        spec = C[ch][li] if ch else ""
+        cards += f'<div class="unit"><span class="u-n num">×{g["n"]}</span><div><b>{e(D[kk][li])}</b><span class="u-m">{e(mk)} {e(md)}{(" · "+e(spec)) if spec and spec!="—" else ""} · <span class="num">{ytxt}</span></span>{pill}</div></div>'
+    mobc = "".join(f'<div class="unit mob"><span class="u-n num">×{q}</span><div><b>{e(D[kk][li])} <span class="num">{e(cap if lang!="ar" else cap.replace("t","طن"))}</span></b><span class="u-m">{e(t["d48"] if dl=="48" else t["dplan"])}</span></div></div>' for (kk, cap, q, dl) in mob)
+    acqc = "".join(f'<div class="unit acq"><span class="u-n num">×{a[0]}</span><div><b>{e(a[1+li])}</b></div></div>' for a in acq)
+    gal = "".join(f'<figure class="pg-it"><img src="{d}assets/media/parc/{g}.webp" width="1000" height="650" alt="" loading="lazy" decoding="async"></figure>' for g in FAM_GAL[k])
+    uses = "".join(f"<li>{e(x)}</li>" for x in fm["uses"])
+    terms = "".join(f"<li>{e(x)}</li>" for x in f["terms"])
+    import urllib.parse
+    wa = "https://wa.me/" + WA + "?text=" + urllib.parse.quote(f["wa"] + fm["t"])
+    others = "".join(f'<a class="fam-chip" href="{o}.html">{icon(FAM_ICON[o])}{e(f["fam"][o]["short"])}</a>' for o in FAM_ORDER if o != k)
+    body = f'''{header(lang,page)}
+<main id="main">
+<section class="fam-hero" style="background-image:linear-gradient(90deg,rgba(20,21,20,.9),rgba(20,21,20,.45)),url({d}assets/media/parc/{k}-hero.webp)"><div class="wrap">
+<span class="kicker" style="color:var(--amber)">{e(f["menu"])}</span>
+<h1>{e(fm["t"])}</h1><p class="lead">{e(fm["lead"])}</p>
+<div class="ctas"><a class="btn btn-amber" href="{wa}" target="_blank" rel="noopener">{icon('wa')} {e(t['cta_wa'])}</a><a class="btn btn-ghost" href="#detail">{e(f["list_h"])}</a></div>
+</div></section>
+<div class="stats"><div class="wrap"><ul class="s{3 + (1 if n_mob else 0)}">{stats}</ul></div></div>
+<section><div class="wrap"><div class="pg pg-{len(FAM_GAL[k])}">{gal}</div><p class="gal-note">{e(f["photo_note"])}</p></div></section>
+<section class="sec-alt" id="detail"><div class="wrap">
+<div class="sec-head"><span class="kicker">{e(f["list_h"])}</span><h2>{e(fm["t"])}</h2></div>
+<h3 class="u-h">{e(f["own_h"])}</h3><div class="units">{cards}</div>
+{f'<h3 class="u-h">{e(f["mob_h"])}</h3><div class="units">{mobc}</div>' if mobc else ''}
+<h3 class="u-h">{e(f["acq_h"])}</h3><div class="units">{acqc}</div>
+</div></section>
+<section><div class="wrap grid g2">
+<div class="card"><h3>{e(f["uses_h"])}</h3><ul class="chk">{uses}</ul></div>
+<div class="card"><h3>{e(f["terms_h"])}</h3><ul class="chk">{terms}</ul></div>
+</div></section>
+<section class="sec-alt"><div class="wrap">
+<div class="card dark cta-row"><div><h3>{e(f["cta_h"])}</h3><p style="margin:0">{e(f["cta_p"])}</p></div><a class="btn btn-amber" href="{wa}" target="_blank" rel="noopener">{icon('wa')} {e(t['cta_wa'])}</a></div>
+<div class="fam-other">{others}<a class="fam-chip" href="materiel.html">{e(f["all"])}</a></div>
+</div></section>
+</main>
+{footer(lang,page)}'''
+    return head(lang, page, fm["title"], fm["desc"]) + "\n" + body
+
+def qualif_page(lang):
+    t = T[lang]; q = F[lang]["q"]; d = depth(lang); page = "qualification.html"
+    acts = "".join(f'<div class="q-act"><span class="q-code">{c}</span><b>{e(n)}</b><span>{e(r)}</span></div>' for c, n, r in q["acts"])
+    why = "".join(f"<li>{e(x)}</li>" for x in q["why"])
+    docs = "".join(f"<li>{e(x)}</li>" for x in q["docs"])
+    import urllib.parse
+    wa = "https://wa.me/" + WA + "?text=" + urllib.parse.quote(q["cta"] + " — ETPBH MAROUANE")
+    body = f'''{header(lang,page)}
+<main id="main">
+<section class="fam-hero" style="background-image:linear-gradient(90deg,rgba(20,21,20,.92),rgba(20,21,20,.5)),url({d}assets/media/parc/qualif-hero.webp)"><div class="wrap">
+<div class="q-badge"><span>{"الصنف" if lang=="ar" else ("Class" if lang=="en" else "Catégorie")}</span><b>IV</b></div>
+<h1>{e(q["h1"])}</h1><p class="lead">{e(q["lead"])}</p>
+<div class="ctas"><a class="btn btn-amber" href="{wa}" target="_blank" rel="noopener">{icon('wa')} {e(q["cta"])}</a></div>
+</div></section>
+<section><div class="wrap">
+<div class="sec-head"><h2>{e(q["acts_h"])}</h2></div>
+<div class="q-acts">{acts}</div>
+</div></section>
+<section class="sec-alt"><div class="wrap grid g2">
+<div class="card"><h3>{e(q["why_h"])}</h3><ul class="chk">{why}</ul></div>
+<div class="card"><h3>{e(q["docs_h"])}</h3><ul class="chk">{docs}</ul><p style="margin-top:14px"><a class="btn btn-dark" href="{wa}" target="_blank" rel="noopener">{e(q["cta"])}</a></p></div>
+</div></section>
+</main>
+{footer(lang,page)}'''
+    return head(lang, page, q["title"], q["desc"]) + "\n" + body
+
 def notfound():
     blocks = "".join(f'<div class="card" lang="{l}" dir="{T[l]["dir"]}"><h2>{e(T[l]["notfound_h"])}</h2><p>{e(T[l]["notfound_p"])}</p><a class="btn btn-dark" href="/{T[l]["prefix"]}">{e(T[l]["home"])}</a></div>' for l in LANGS)
     h = head("fr", "", "Page introuvable — ETPBH MAROUANE", T["fr"]["notfound_p"]).replace('href="favicon.ico"','href="/favicon.ico"').replace('href="assets/','href="/assets/').replace('href="site.webmanifest','href="/site.webmanifest')
@@ -257,10 +354,12 @@ for l in LANGS:
     pre = T[l]["prefix"]
     write(pre + "index.html", home(l))
     write(pre + "materiel.html", materiel(l))
+    for k in FAM_ORDER: write(pre + k + ".html", fam_page(l, k))
+    write(pre + "qualification.html", qualif_page(l))
 write("404.html", notfound())
 write("robots.txt", f"User-agent: *\nAllow: /\n\nSitemap: {DOMAIN}/sitemap.xml\n")
 urls = []
-for page in ["", "materiel.html"]:
+for page in ["", "materiel.html", "qualification.html"] + [k + ".html" for k in FAM_ORDER]:
     for l in LANGS:
         alts = "".join(f'<xhtml:link rel="alternate" hreflang="{a}" href="{url(a,page)}"/>' for a in LANGS)
         urls.append(f"<url><loc>{url(l,page)}</loc><lastmod>{TODAY}</lastmod>{alts}</url>")

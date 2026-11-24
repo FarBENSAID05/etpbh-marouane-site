@@ -43,3 +43,39 @@
       '&body=' + encodeURIComponent(message());
   });
 })();
+
+/* Thème jour / nuit : le thème est déjà posé par le script du <head> ; ici, la bascule. */
+(function () {
+  var root = document.documentElement, KEY = 'etp_theme';
+  function stored() { try { var v = localStorage.getItem(KEY); return v === 'light' || v === 'dark' ? v : null; } catch (e) { return null; } }
+  function apply(t) {
+    root.setAttribute('data-theme', t);
+    document.querySelectorAll('.theme-btn').forEach(function (b) { b.setAttribute('aria-pressed', String(t === 'dark')); });
+  }
+  document.querySelectorAll('.theme-btn').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      apply(next);
+      try { localStorage.setItem(KEY, next); } catch (e) {}
+    });
+  });
+  var mq = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)');
+  if (mq) {
+    var on = function (e) { if (!stored()) apply(e.matches ? 'dark' : 'light'); };
+    if (mq.addEventListener) mq.addEventListener('change', on); else if (mq.addListener) mq.addListener(on);
+  }
+  apply(root.getAttribute('data-theme') || 'light');
+})();
+
+/* Sélecteur de langue : menu déroulant (clic / toucher, Échap, clic à l'extérieur). */
+(function () {
+  document.querySelectorAll('.lang-drop').forEach(function (wrap) {
+    var btn = wrap.querySelector('.lang-drop-btn');
+    var links = wrap.querySelectorAll('a.lang-btn');
+    function set(open) { wrap.classList.toggle('open', open); btn.setAttribute('aria-expanded', open ? 'true' : 'false'); }
+    btn.addEventListener('click', function (e) { e.stopPropagation(); set(!wrap.classList.contains('open')); });
+    btn.addEventListener('keydown', function (e) { if (e.key === 'ArrowDown') { e.preventDefault(); set(true); if (links[0]) links[0].focus(); } });
+    wrap.addEventListener('keydown', function (e) { if (e.key === 'Escape') { set(false); btn.focus(); } });
+    document.addEventListener('click', function (e) { if (!wrap.contains(e.target)) set(false); });
+  });
+})();

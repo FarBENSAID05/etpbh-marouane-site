@@ -41,6 +41,8 @@ def depth(lang): return "" if lang == "fr" else "../"
 def url(lang, page):  # page: "" ou "materiel.html" -> URL publiée SANS extension (convention profitpilot.dz)
     return f"{DOMAIN}/{T[lang]['prefix']}{page[:-5] if page.endswith('.html') else page}"
 
+THEME_JS = '<script>(function(){try{var s=localStorage.getItem("etp_theme");var t=(s==="light"||s==="dark")?s:(window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","light");}})();</script>'
+
 def head(lang, page, title, desc, extra_ld=None):
     t = T[lang]; d = depth(lang)
     alts = "\n".join(f'<link rel="alternate" hreflang="{l}" href="{url(l,page)}">' for l in LANGS)
@@ -67,6 +69,8 @@ def head(lang, page, title, desc, extra_ld=None):
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+{THEME_JS}
+<meta name="color-scheme" content="light dark">
 <title>{e(title)}</title>
 <meta name="description" content="{e(desc)}">
 <link rel="canonical" href="{url(lang,page)}">
@@ -89,6 +93,11 @@ def head(lang, page, title, desc, extra_ld=None):
 <body>
 <a class="skip" href="#main">{t['skip']}</a>'''
 
+LANG_NAME = {"fr":"Français","ar":"العربية","en":"English"}
+UI = {"fr":{"lang":"Changer de langue","theme":"Basculer entre le mode sombre et le mode clair"},
+      "ar":{"lang":"تغيير اللغة","theme":"التبديل بين الوضع الليلي والوضع النهاري"},
+      "en":{"lang":"Change language","theme":"Switch between dark and light mode"}}
+
 def header(lang, page):
     t = T[lang]; d = depth(lang)
     f = F[lang]
@@ -105,12 +114,15 @@ def header(lang, page):
         target = d + T[l]["prefix"] + (page or "")
         if not (page or "") and target == "": target = "./"
         if target.endswith("/") is False and page == "" : target = target or "./"
-        cur = ' aria-current="true"' if l == lang else ""
-        langs.append(f'<a href="{target or "./"}" hreflang="{l}" lang="{l}"{cur}>{l.upper()}</a>')
+        if l == lang:
+            langs.append(f'<span class="lang-btn active" aria-current="page" lang="{l}"><span class="lang-code">{l.upper()}</span><span class="lang-name">{LANG_NAME[l]}</span></span>')
+        else:
+            langs.append(f'<a class="lang-btn" href="{target or "./"}" hreflang="{l}" lang="{l}" rel="alternate"><span class="lang-code">{l.upper()}</span><span class="lang-name">{LANG_NAME[l]}</span></a>')
     return f'''<header class="hdr"><div class="wrap">
 <a class="brand" href="./" aria-label="ETPBH MAROUANE — {e(t['home'])}"><picture><source srcset="{d}assets/img/logo-260.webp" type="image/webp"><img src="{d}assets/img/logo-260.png" width="260" height="144" alt="ETPBH MAROUANE"></picture></a>
 <nav class="nav" id="nav" aria-label="Navigation">{''.join(links)}</nav>
-<div class="langs">{''.join(langs)}</div>
+<div class="nav-lang"><div class="lang-drop"><button type="button" class="lang-drop-btn" aria-haspopup="true" aria-expanded="false" aria-label="{UI[lang]['lang']}" title="{UI[lang]['lang']}"><span>{lang.upper()}</span><svg class="lang-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button><div class="lang-drop-menu">{''.join(langs)}</div></div>
+<button type="button" class="theme-btn" aria-pressed="false" aria-label="{UI[lang]['theme']}" title="{UI[lang]['theme']}"><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2m-7.07-17.07 1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg></button></div>
 <a class="btn btn-amber hide-m" href="{tally(lang)}" target="_blank" rel="noopener">{e(t['cta'])}</a>
 <button class="menu-btn" aria-controls="nav" aria-expanded="false" aria-label="{e(t['menu'])}">{icon('menu')}</button>
 </div></header>'''
@@ -266,7 +278,6 @@ def fam_page(lang, k):
     n_own = len(own); n_mob = sum(r[2] for r in mob); n_acq = sum(a[0] for a in acq)
     stats = f'<li><b class="num">{n_own}</b><span>{e(f["units_own"])}</span></li>'
     if n_mob: stats += f'<li><b class="num">{n_mob}</b><span>{e(f["units_mob"])}</span></li>'
-    stats += f'<li><b class="num">{n_acq}</b><span>{e(f["units_acq"])}</span></li>'
     stats += f'<li><b class="num">{t["stats"][2][0]}</b><span>{e(t["stats"][2][1])}</span></li>'
     # group own units by (designation, model)
     groups = {}
@@ -296,13 +307,12 @@ def fam_page(lang, k):
 <h1>{e(fm["t"])}</h1><p class="lead">{e(fm["lead"])}</p>
 <div class="ctas"><a class="btn btn-amber" href="{tally(lang)}" target="_blank" rel="noopener">{e(t['cta'])}</a><a class="btn btn-ghost" href="{wa}" target="_blank" rel="noopener">{icon('wa')} {e(t['cta_wa'])}</a><a class="btn btn-ghost" href="#detail">{e(f["list_h"])}</a></div>
 </div></section>
-<div class="stats"><div class="wrap"><ul class="s{3 + (1 if n_mob else 0)}">{stats}</ul></div></div>
+<div class="stats"><div class="wrap"><ul class="s{2 + (1 if n_mob else 0)}">{stats}</ul></div></div>
 <section><div class="wrap"><div class="pg pg-{len(FAM_GAL[k])}">{gal}</div><p class="gal-note">{e(f["photo_note"])}</p></div></section>
 <section class="sec-alt" id="detail"><div class="wrap">
 <div class="sec-head"><span class="kicker">{e(f["list_h"])}</span><h2>{e(fm["t"])}</h2></div>
 <h3 class="u-h">{e(f["own_h"])}</h3><div class="units">{cards}</div>
 {f'<h3 class="u-h">{e(f["mob_h"])}</h3><div class="units">{mobc}</div>' if mobc else ''}
-<h3 class="u-h">{e(f["acq_h"])}</h3><div class="units">{acqc}</div>
 </div></section>
 <section><div class="wrap grid g2">
 <div class="card"><h3>{e(f["uses_h"])}</h3><ul class="chk">{uses}</ul></div>

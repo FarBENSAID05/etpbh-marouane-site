@@ -6,6 +6,8 @@ import sys, os, hashlib, html, datetime
 from strings import T, MEDIA, GALLERY, SVC_IMG, PHOTO_CREDITS
 from families import F, FAM_KEYS, FAM_ORDER, FAM_ICON, FAM_GAL, FAM_ACQ
 from data import *
+from contenu import appliquer, CAT, FAM_FIG
+appliquer(T, F)
 
 OUT = sys.argv[1] if len(sys.argv) > 1 else os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "public_html")
 LANGS = ["fr", "ar", "en"]
@@ -17,6 +19,7 @@ def ver(path):
     return hashlib.md5(open(p, "rb").read()).hexdigest()[:8] if os.path.exists(p) else "1"
 
 ICONS = {
+ "rail": '<path d="M7 3h10a2 2 0 0 1 2 2v9a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V5a2 2 0 0 1 2-2Z"/><path d="M5 10h14"/><path d="M12 3v7"/><circle cx="8.5" cy="13.5" r="1"/><circle cx="15.5" cy="13.5" r="1"/><path d="m8 17-3 4"/><path d="m16 17 3 4"/>',
  "crane":'<path d="M4 21h10M7 21V8l11-5 2 3-13 6"/><path d="M18 6v6M16 12h4v3h-4z"/>',
  "dig":'<path d="M3 17h9l2-4h5l2 4v2H3z"/><path d="M14 13l-3-7-5 2 2 5"/><circle cx="7" cy="19" r="1.5"/><circle cx="17" cy="19" r="1.5"/>',
  "mixer":'<rect x="2" y="9" width="6" height="7" rx="1"/><path d="M8 11l4-3 8 2-1 6-11 0"/><circle cx="6" cy="18" r="1.6"/><circle cx="17" cy="18" r="1.6"/>',
@@ -29,6 +32,12 @@ ICONS = {
  "wa":'<path d="M4 20l1.3-4A8 8 0 1112 20a8 8 0 01-4-1.1z"/><path d="M9 9c0 3 2.5 5.5 5.5 5.5l1-1.5-2-1-1 1c-1-.4-2-1.4-2.4-2.4l1-1-1-2z"/>',
  "menu":'<path d="M4 7h16M4 12h16M4 17h16"/>',
 }
+def statval(v):
+    """Chiffre + unité : seul le chiffre est isolé en LTR, l'unité suit le sens de la page."""
+    import re as _r
+    m = _r.match(r'^(.*?)\s*(<small>.*</small>)$', v)
+    return f'<span class="num">{m.group(1)}</span> {m.group(2)}' if m else f'<span class="num">{v}</span>'
+
 def icon(k, cls=""):
     return f'<svg class="{cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">{ICONS[k]}</svg>'
 WA_SVG = '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3a13 13 0 00-11.2 19.6L3 29l6.6-1.7A13 13 0 1016 3zm0 23.6a10.6 10.6 0 01-5.4-1.5l-.4-.2-3.9 1 1-3.8-.2-.4A10.6 10.6 0 1116 26.6zm5.8-7.9c-.3-.2-1.9-.9-2.2-1s-.5-.2-.7.2-.8 1-1 1.2-.4.2-.7.1a8.7 8.7 0 01-4.3-3.8c-.3-.6.3-.5.9-1.7.1-.2 0-.4 0-.6l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6a1.2 1.2 0 00-.9.4 3.6 3.6 0 00-1.1 2.7 6.3 6.3 0 001.3 3.3 14.4 14.4 0 005.5 4.9c2 .9 2.8 1 3.9.8a3.3 3.3 0 002.2-1.5 2.7 2.7 0 00.2-1.5c-.1-.2-.3-.3-.6-.4z"/></svg>'
@@ -156,15 +165,19 @@ def maplink(q):
 
 def home(lang):
     t = T[lang]; m = MEDIA[lang]; d = depth(lang)
-    stats = "".join(f'<li><b class="num">{v}</b><span>{e(l)}</span></li>' for v, l in t["stats"])
-    svc = "".join(f'''<article class="card has-img"><img class="card-img" src="{d}assets/media/{img}.webp" width="800" height="500" alt="" loading="lazy" decoding="async"><div class="ico">{icon(k)}</div><h3>{e(h)}</h3><p>{e(p)}</p><ul>{"".join(f"<li>{e(x)}</li>" for x in li)}</ul><a class="card-link" href="{CARD_LINK[k]}">{e(F[lang]["see"] if k not in ("road",) else F[lang]["qualif_nav"])} →</a></article>''' for (k, h, p, li), img in zip(t["svc"], SVC_IMG))
+    stats = "".join(f'<li><b>{statval(v)}</b><span>{e(l)}</span></li>' for v, l in t["stats"])
+    svc = "".join(f'''<article class="card has-img"><img class="card-img" src="{d}assets/media/{img}.webp" width="800" height="500" alt="" loading="lazy" decoding="async"><div class="ico">{icon(k)}</div><h3>{e(h)}</h3><p>{e(p)}</p><ul>{"".join(f"<li>{e(x)}</li>" for x in li)}</ul><a class="card-link" href="{CARD_LINK[k]}">{e(F[lang]["see"] if k not in ("road",) else F[lang]["qualif_nav"])} {"←" if lang=="ar" else "→"}</a></article>''' for (k, h, p, li), img in zip(t["svc"], SVC_IMG))
     how = "".join(f'<div class="step"><h3>{e(h)}</h3><p>{e(p)}</p></div>' for h, p in t["how"])
     refm = "".join(f'<div class="proj"><b>{e(n)}</b><span>{e(p)}</span></div>' for n, p in t["ref_main"])
     refn = "".join(f'<li><b>{e(n)}</b><span>{e(p)}</span></li>' for n, p in t["ref_nat"])
     badges = "".join(f'<span class="badge">{e(b)}</span>' for b in t["q_badges"])
     qmaps = ["Hydra, Alger, Algérie", "Saoula, Alger, Algérie"]
     qcards = "".join(f'<div class="card"><div class="ico">{icon("pin")}</div><h3>{e(h)}</h3><p>{e(p)}</p><a href="{maplink(m)}" target="_blank" rel="noopener">{e(t["map"])}</a></div>' for (h, p), m in zip(t["q_cards"], qmaps))
-    fleet = "".join(f'<article class="card{" dark" if i==0 else ""}"><h3 class="num">{e(n)}</h3><p><b>{e(h)}</b></p><p>{e(p)}</p></article>' for i, (n, h, p) in enumerate(t["fleet_cards"]))
+    v2 = t["v2"]
+    pj = "".join(f'<article class="card pj"><div class="ico">{icon(ic)}</div><h3>{e(h)}</h3><p>{e(p)}</p></article>' for ic, h, p in v2["pj"])
+    vip = "".join(f"<p>{e(x)}</p>" for x in v2["vi_p"])
+    vig = "".join(f"<li>{e(x)}</li>" for x in v2["vi_goals"])
+    fleet = "".join(f'<article class="card{" dark" if i==0 else ""}"><h3>{e(n)}</h3><p><b>{e(h)}</b></p><p>{e(p)}</p></article>' for i, (n, h, p) in enumerate(t["fleet_cards"]))
     f = t["f"]
     opts = "".join(f"<option>{e(o)}</option>" for o in t["f_opts"])
     data_attrs = f'data-title="{e(t["f_title"])}" ' + " ".join(f'data-l{k}="{e(v)}"' for k, v in [("nom",f["nom"]),("soc",f["societe"]),("tel",f["tel"]),("besoin",f["besoin"]),("lieu",f["lieu"]),("duree",f["duree"]),("details",f["details"])])
@@ -194,6 +207,16 @@ def home(lang):
 <section id="methode"><div class="wrap">
 <div class="sec-head"><span class="kicker">{e(t['how_k'])}</span><h2>{e(t['how_h'])}</h2></div>
 <div class="steps">{how}</div>
+</div></section>
+
+<section class="sec-alt" id="projets"><div class="wrap">
+<div class="sec-head"><span class="kicker">{e(v2['pj_k'])}</span><h2>{e(v2['pj_h'])}</h2><p>{e(v2['pj_p'])}</p></div>
+<div class="grid g3">{pj}</div>
+</div></section>
+
+<section id="vision"><div class="wrap vision">
+<div><span class="kicker">{e(v2['vi_k'])}</span><h2>{e(v2['vi_h'])}</h2>{vip}</div>
+<div class="card dark"><h3>{e(v2['vi_goals_h'])}</h3><ul class="chk">{vig}</ul></div>
 </div></section>
 
 <section class="sec-alt" id="references"><div class="wrap">
@@ -234,35 +257,25 @@ def home(lang):
     return head(lang, "", t["title_home"], t["desc_home"]) + "\n" + body
 
 def materiel(lang):
-    t = T[lang]; li = LANGS.index(lang)
-    thA = t["th_A"]
-    rowsA = []
-    for n, (k, mk, md, ch, yr, st) in enumerate(PARC, 1):
-        pill = f'<span class="pill">{e(t["st_ok"])}</span>' if st == "ok" else f'<span class="pill wait">{e(t["st_enc"])}</span>'
-        cells = [str(n), D[k][li], mk, md, C[ch][li], str(yr)]
-        tds = "".join(f'<td data-l="{e(thA[i])}"{" class=cat" if i==1 else ""}>{e(c) if i!=0 else c}</td>' for i, c in enumerate(cells))
-        rowsA.append(f"<tr>{tds}<td data-l=\"{e(thA[6])}\">{pill}</td></tr>")
-    thB = t["th_B"]
-    rowsB = "".join(
-        f'<tr><td data-l="{e(thB[0])}">{n}</td><td class="cat" data-l="{e(thB[1])}">{e(D[k][li])}</td><td data-l="{e(thB[2])}" class="num">{e(cap if lang!="ar" else cap.replace("t","طن"))}</td><td data-l="{e(thB[3])}">{q}</td><td data-l="{e(thB[4])}">{e(t["d48"] if dl=="48" else t["dplan"])}</td></tr>'
-        for n, (k, cap, q, dl) in enumerate(MOBIL, 1))
-    thC = t["th_C"]
-    rowsC = "".join(f'<tr><td class="cat" data-l="{e(thC[0])}">{e(r[li])}</td><td data-l="{e(thC[1])}">{r[3]}</td></tr>' for r in ACQ)
-    th = lambda hs: "".join(f'<th scope="col">{e(h)}</th>' for h in hs)
+    t = T[lang]; li = LANGS.index(lang); v2 = t["v2"]; f = F[lang]
+    th = v2["th_cat"]
+    secs = []
+    for fam in FAM_ORDER:
+        rows = []
+        for it in CAT[fam]:
+            cap = it[3 + li] or "—"; mk = it[6] or "—"
+            mob = v2["mob_mix"] if it[7] == "mix" else v2["mob_48"]
+            rows.append(f'<tr><td class="cat" data-l="{e(th[0])}">{e(it[li])}</td><td data-l="{e(th[1])}">{e(cap)}</td><td data-l="{e(th[2])}">{e(mk)}</td><td data-l="{e(th[3])}">{e(mob)}</td></tr>')
+        head_ = "".join(f'<th scope="col">{e(h)}</th>' for h in th)
+        secs.append(f'<div class="fleet-sec"><div class="fleet-h"><h2>{icon(FAM_ICON[fam], "fam-ico")} {e(f["fam"][fam]["t"])}</h2><a class="card-link" href="{fam}.html">{e(f["see"])} {"←" if lang=="ar" else "→"}</a></div>'
+                    f'<table class="tbl"><thead><tr>{head_}</tr></thead><tbody>{"".join(rows)}</tbody></table></div>')
     body = f'''{header(lang,"materiel.html")}
 <main id="main">
 <section class="page-hero has-bg" style="padding:56px 0 48px;background-image:linear-gradient(90deg,rgba(23,24,23,.92),rgba(23,24,23,.65)),url({depth(lang)}assets/media/mat-banner.webp)"><div class="wrap"><span class="kicker" style="color:var(--amber)">{e(t['fleet_k'])}</span><h1>{e(t['mat_h1'])}</h1><p>{e(t['mat_lead'])}</p></div></section>
 <section><div class="wrap">
-<div class="fleet-sec"><div class="fleet-h"><div><h2>{e(t['A_h'])}</h2><p>{e(t['A_p'])}</p></div></div>
-<table class="tbl"><thead><tr>{th(thA)}</tr></thead><tbody>{''.join(rowsA)}</tbody></table>
-<p class="legend"><b>{e(t['total_A'])}</b></p></div>
-<div class="fleet-sec"><div class="fleet-h"><div><h2>{e(t['B_h'])}</h2><p>{e(t['B_p'])}</p></div></div>
-<table class="tbl"><thead><tr>{th(thB)}</tr></thead><tbody>{rowsB}</tbody></table>
-<p class="legend"><b>{e(t['total_B'])}</b></p></div>
-<div class="fleet-sec"><div class="fleet-h"><div><h2>{e(t['C_h'])}</h2><p>{e(t['C_p'])}</p></div></div>
-<table class="tbl"><thead><tr>{th(thC)}</tr></thead><tbody>{rowsC}</tbody></table>
-<p class="legend"><b>{e(t['total_C'])}</b></p></div>
-<div class="card dark" style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap"><div><h3>{e(t['mat_cta_h'])}</h3><p style="margin:0">{e(t['mat_cta_p'])}</p></div><div class="ctas"><a class="btn btn-amber" href="{tally(lang)}" target="_blank" rel="noopener">{e(t['cta'])}</a><a class="btn btn-ghost" href="https://wa.me/{WA}" target="_blank" rel="noopener">{icon('wa')} {e(t['cta_wa'])}</a></div></div>
+{"".join(secs)}
+<p class="legend">{e(v2['mat_note'])}</p>
+<div class="card dark cta-row" style="margin-top:28px"><div><h3>{e(t['mat_cta_h'])}</h3><p style="margin:0">{e(t['mat_cta_p'])}</p></div><div class="ctas"><a class="btn btn-amber" href="{tally(lang)}" target="_blank" rel="noopener">{e(t['cta'])}</a><a class="btn btn-ghost" href="https://wa.me/{WA}" target="_blank" rel="noopener">{icon('wa')} {e(t['cta_wa'])}</a></div></div>
 </div></section>
 </main>
 {footer(lang,"materiel.html")}'''
@@ -271,26 +284,17 @@ def materiel(lang):
 
 def fam_page(lang, k):
     t = T[lang]; f = F[lang]; fm = f["fam"][k]; li = LANGS.index(lang); d = depth(lang); page = k + ".html"
-    keys = FAM_KEYS[k]
-    own = [r for r in PARC if r[0] in keys["parc"]]
-    mob = [r for r in MOBIL if r[0] in keys["mobil"]]
-    acq = FAM_ACQ[k]
-    n_own = len(own); n_mob = sum(r[2] for r in mob); n_acq = sum(a[0] for a in acq)
-    stats = f'<li><b class="num">{n_own}</b><span>{e(f["units_own"])}</span></li>'
-    if n_mob: stats += f'<li><b class="num">{n_mob}</b><span>{e(f["units_mob"])}</span></li>'
-    stats += f'<li><b class="num">{t["stats"][2][0]}</b><span>{e(t["stats"][2][1])}</span></li>'
-    # group own units by (designation, model)
-    groups = {}
-    for (kk, mk, md, ch, yr, st) in own:
-        g = groups.setdefault((kk, mk, md, ch), {"n":0,"years":set(),"st":set()}); g["n"] += 1; g["years"].add(yr); g["st"].add(st)
+    v2 = t["v2"]
+    fig = FAM_FIG[k]
+    stats = f'<li><b>{statval(fig[0])}</b><span>{e(fig[1 + li])}</span></li>'
+    stats += f'<li><b>{statval(t["stats"][1][0])}</b><span>{e(t["stats"][1][1])}</span></li>'
+    stats += f'<li><b>{statval(t["stats"][2][0])}</b><span>{e(t["stats"][2][1])}</span></li>'
     cards = ""
-    for (kk, mk, md, ch), g in groups.items():
-        yrs = sorted(g["years"]); ytxt = str(yrs[0]) if len(yrs)==1 else f"{yrs[0]}–{yrs[-1]}"
-        pill = f'<span class="pill">{e(t["st_ok"])}</span>' if g["st"] == {"ok"} else f'<span class="pill wait">{e(t["st_enc"])}</span>'
-        spec = C[ch][li] if ch else ""
-        cards += f'<div class="unit"><span class="u-n num">×{g["n"]}</span><div><b>{e(D[kk][li])}</b><span class="u-m">{e(mk)} {e(md)}{(" · "+e(spec)) if spec and spec!="—" else ""} · <span class="num">{ytxt}</span></span>{pill}</div></div>'
-    mobc = "".join(f'<div class="unit mob"><span class="u-n num">×{q}</span><div><b>{e(D[kk][li])} <span class="num">{e(cap if lang!="ar" else cap.replace("t","طن"))}</span></b><span class="u-m">{e(t["d48"] if dl=="48" else t["dplan"])}</span></div></div>' for (kk, cap, q, dl) in mob)
-    acqc = "".join(f'<div class="unit acq"><span class="u-n num">×{a[0]}</span><div><b>{e(a[1+li])}</b></div></div>' for a in acq)
+    for it in CAT[k]:
+        cap = it[3 + li]; mk = it[6]
+        mob = v2["mob_mix"] if it[7] == "mix" else v2["mob_48"]
+        meta = " · ".join(x for x in (cap, mk) if x)
+        cards += f'<div class="unit"><span class="u-n">{icon(FAM_ICON[k])}</span><div><b>{e(it[li])}</b><span class="u-m">{e(meta) if meta else ""}</span><span class="pill">{e(mob)}</span></div></div>'
     gal = "".join(f'<figure class="pg-it"><img src="{d}assets/media/parc/{g}.webp" width="1000" height="650" alt="" loading="lazy" decoding="async"></figure>' for g in FAM_GAL[k])
     uses = "".join(f"<li>{e(x)}</li>" for x in fm["uses"])
     terms = "".join(f"<li>{e(x)}</li>" for x in f["terms"])
@@ -307,12 +311,12 @@ def fam_page(lang, k):
 <h1>{e(fm["t"])}</h1><p class="lead">{e(fm["lead"])}</p>
 <div class="ctas"><a class="btn btn-amber" href="{tally(lang)}" target="_blank" rel="noopener">{e(t['cta'])}</a><a class="btn btn-ghost" href="{wa}" target="_blank" rel="noopener">{icon('wa')} {e(t['cta_wa'])}</a><a class="btn btn-ghost" href="#detail">{e(f["list_h"])}</a></div>
 </div></section>
-<div class="stats"><div class="wrap"><ul class="s{2 + (1 if n_mob else 0)}">{stats}</ul></div></div>
+<div class="stats"><div class="wrap"><ul class="s3">{stats}</ul></div></div>
 <section><div class="wrap"><div class="pg pg-{len(FAM_GAL[k])}">{gal}</div><p class="gal-note">{e(f["photo_note"])}</p></div></section>
 <section class="sec-alt" id="detail"><div class="wrap">
 <div class="sec-head"><span class="kicker">{e(f["list_h"])}</span><h2>{e(fm["t"])}</h2></div>
-<h3 class="u-h">{e(f["own_h"])}</h3><div class="units">{cards}</div>
-{f'<h3 class="u-h">{e(f["mob_h"])}</h3><div class="units">{mobc}</div>' if mobc else ''}
+<h3 class="u-h">{e(v2["prov_h"])}</h3><div class="units">{cards}</div>
+<p class="legend">{e(v2["mat_note"])}</p>
 </div></section>
 <section><div class="wrap grid g2">
 <div class="card"><h3>{e(f["uses_h"])}</h3><ul class="chk">{uses}</ul></div>

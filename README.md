@@ -3,7 +3,7 @@
 Site statique de l'EURL ETPBH MAROUANE — français à la racine, `ar/`, `en/`.
 
 - `public_html/` : le site servi (Hostinger → Git → dossier racine `public_html`), derrière Cloudflare.
-- `_build/` : générateur des pages (`strings.py` = textes, `data.py` = parc matériel, `build_site.py` = gabarits).
+- `_build/` : générateur des pages (`strings.py` = textes, `contenu.py` = textes v2 prioritaires : ce que l'entreprise peut fournir sans nombre d'engins, grands projets, vision ; `data.py` = parc matériel interne, jamais affiché en nombre ; `build_site.py` = gabarits).
 
 ## Mettre à jour
 

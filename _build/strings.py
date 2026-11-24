@@ -251,7 +251,7 @@ MEDIA = {
  },
 }
 GALLERY = ["gal-viaduc-chiffa","gal-poutres","gal-porte-engins","gal-terrassement-mahelma","gal-viaduc-medea","gal-talus-medea"]
-SVC_IMG = ["parc/levage-grue-at","parc/terr-pelles-rangee","parc/beton-malaxeurs-rangee","parc/transport-bennes","svc-tp","svc-operateur"]
+SVC_IMG = ["parc/levage-grue-at","parc/terr-pelles-rangee","parc/beton-malaxeur-chantier","svc-transport","svc-tp","svc-operateur"]
 WM = "https://commons.wikimedia.org/wiki/File:"
 PHOTO_CREDITS = [
  ("Benchicao - l'assistance (24673339538 / 26769943899 / 38514352512 / 37773736414)", WM+"Benchicao_-_l%27assistance_%D8%A8%D9%86_%D8%B4%D9%83%D8%A7%D9%88_-_%D9%84%D8%A7%D8%B3%D9%8A%D8%B3%D8%AA%D9%88%D9%86%D8%B3_(26769943899).jpg", "habib kaki", "Domaine public / Public domain", None),

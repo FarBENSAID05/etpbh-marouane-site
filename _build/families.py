@@ -13,8 +13,8 @@ FAM_ICON = {"levage": "crane", "terrassement": "dig", "transport": "truck", "bet
 FAM_GAL = {
  "levage":       ["levage-grue-at", "levage-grues-rangee"],
  "terrassement": ["terr-pelles-rangee", "terr-parc-engins", "terr-pelles-chantier", "terr-pelles-soir"],
- "transport":    ["transport-bennes", "transport-dumpers", "transport-porte-engins", "transport-semi-benne"],
- "beton":        ["beton-malaxeurs-rangee", "beton-malaxeurs", "beton-malaxeur-chantier"],
+ "transport":    ["transport-porte-engins-dz", "transport-dumpers", "transport-porte-engins", "transport-semi-benne"],
+ "beton":        ["beton-malaxeur-chantier", "beton-viaduc"],
 }
 # programme AAPI par famille : (quantité, fr, ar, en)
 FAM_ACQ = {
@@ -43,7 +43,7 @@ F = {
  "uses_h":"Pour quels travaux","terms_h":"Conditions de location",
  "terms":["Avec chauffeur ou opérateur qualifié","Mobilisation sous 48 à 72 h (grues lourdes : sur planification)","Pointage journalier signé par votre représentant","Facture unique HT, délais de paiement négociés"],
  "cta_h":"Un devis pour ce matériel ?","cta_p":"Dites-nous combien d'engins, où et pour combien de temps. Nous revenons vers vous avec une proposition.",
- "photo_note":"Photos d'illustration (Pexels). Les photos du parc ETPBH MAROUANE, cartes grises et attestations sont fournies sur demande.",
+ "photo_note":"Photos d'illustration (Pexels, Wikimedia Commons). Les photos du parc ETPBH MAROUANE, cartes grises et attestations sont fournies sur demande.",
  "wa":"Bonjour, je souhaite un devis pour : ",
  "fam": {
   "levage":{"faq":[("Jusqu'à quelle capacité pouvez-vous lever ?","Notre grue Liebherr LTM 1055 lève jusqu'à 55 t. Au-delà, nous mobilisons des grues de 140 à 280 t chez nos partenaires conventionnés, sur planification.")],"t":"Location de grues et levage","short":"Levage","title":"Location de grues mobiles en Algérie — ETPBH MAROUANE",
@@ -83,7 +83,7 @@ F = {
  "uses_h":"لأي أشغال","terms_h":"شروط الكراء",
  "terms":["مع سائق أو مشغّل مؤهَّل","التعبئة خلال 48 إلى 72 ساعة (الرافعات الثقيلة: حسب البرمجة)","ورقة تشغيل يومية يوقّعها ممثّلك","فاتورة واحدة خارج الرسوم وآجال دفع متفاوض عليها"],
  "cta_h":"تحتاج عرض سعر لهذا العتاد؟","cta_p":"قل لنا كم آلية تحتاج، وأين، ولأي مدة. نرسل لك عرضًا.",
- "photo_note":"صور توضيحية (Pexels). صور حظيرة ETPBH MAROUANE والبطاقات الرمادية والشهادات تُقدَّم عند الطلب.",
+ "photo_note":"صور توضيحية (Pexels وWikimedia Commons). صور حظيرة ETPBH MAROUANE والبطاقات الرمادية والشهادات تُقدَّم عند الطلب.",
  "wa":"السلام عليكم، أريد عرض سعر لـ: ",
  "fam": {
   "levage":{"faq":[("ما هي أقصى حمولة يمكنكم رفعها؟","رافعتنا Liebherr LTM 1055 ترفع حتى 55 طن. وفوق ذلك نعبّئ رافعات من 140 إلى 280 طن لدى شركائنا المتعاقدين، حسب البرمجة.")],"t":"كراء الرافعات والرفع","short":"الرفع","title":"كراء الرافعات المتنقلة في الجزائر — ETPBH MAROUANE",
@@ -123,7 +123,7 @@ F = {
  "uses_h":"Typical work","terms_h":"Rental terms",
  "terms":["With qualified driver or operator","Mobilisation within 48 to 72 h (heavy cranes: scheduled)","Daily timesheet signed by your representative","Single invoice excluding VAT, negotiated payment terms"],
  "cta_h":"Need a quote for this equipment?","cta_p":"Tell us how many machines you need, where and for how long. We will come back with a proposal.",
- "photo_note":"Illustrative photos (Pexels). Photos of the ETPBH MAROUANE fleet, registration documents and certificates are available on request.",
+ "photo_note":"Illustrative photos (Pexels, Wikimedia Commons). Photos of the ETPBH MAROUANE fleet, registration documents and certificates are available on request.",
  "wa":"Hello, I would like a quote for: ",
  "fam": {
   "levage":{"faq":[("What is the maximum capacity you can lift?","Our Liebherr LTM 1055 lifts up to 55 t. Above that, we bring in 140 to 280 t cranes from contracted partners, on a scheduled basis.")],"t":"Crane hire and lifting","short":"Lifting","title":"Mobile crane hire in Algeria — ETPBH MAROUANE",

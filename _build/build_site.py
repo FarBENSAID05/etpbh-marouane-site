@@ -38,15 +38,15 @@ ROAD = '''<svg class="road" viewBox="0 0 1440 220" preserveAspectRatio="none" ar
 <path d="M-20 170 C 260 90, 520 120, 760 150 S 1180 210, 1460 110" stroke="#F9AC08" stroke-width="4" stroke-dasharray="38 30" fill="none" opacity=".85"/></svg>'''
 
 def depth(lang): return "" if lang == "fr" else "../"
-def url(lang, page):  # page: "" or "materiel.html"
-    return f"{DOMAIN}/{T[lang]['prefix']}{page}"
+def url(lang, page):  # page: "" ou "materiel.html" -> URL publiée SANS extension (convention profitpilot.dz)
+    return f"{DOMAIN}/{T[lang]['prefix']}{page[:-5] if page.endswith('.html') else page}"
 
-def head(lang, page, title, desc):
+def head(lang, page, title, desc, extra_ld=None):
     t = T[lang]; d = depth(lang)
     alts = "\n".join(f'<link rel="alternate" hreflang="{l}" href="{url(l,page)}">' for l in LANGS)
     alts += f'\n<link rel="alternate" hreflang="x-default" href="{url("fr",page)}">'
-    fonts = ("https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" if lang == "ar"
-             else "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Oswald:wght@500;600;700&display=swap")
+    fonts = (["thmanyahsans-Regular", "thmanyahserifdisplay-Black"] if lang == "ar" else ["dm-sans-latin-400-normal", "playfair-display-latin-900-normal"])
+    preload = "\n".join(f'<link rel="preload" href="{d}assets/fonts/{f}.woff2" as="font" type="font/woff2" crossorigin>' for f in fonts)
     ld = {
       "@context":"https://schema.org","@type":"LocalBusiness","@id":DOMAIN+"/#org",
       "name":"EURL ETPBH MAROUANE","url":DOMAIN+"/","logo":DOMAIN+"/assets/img/logo-520.png",
@@ -56,6 +56,12 @@ def head(lang, page, title, desc):
       "founder":{"@type":"Person","name":"LATELLI Madani"},
     }
     import json
+    more = list(extra_ld or [])
+    if page:
+        more.append({"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+            {"@type":"ListItem","position":1,"name":t["home"],"item":url(lang,"")},
+            {"@type":"ListItem","position":2,"name":title.split(" — ")[0],"item":url(lang,page)}]})
+    ld_more = "".join(f'\n<script type="application/ld+json">{json.dumps(x, ensure_ascii=False)}</script>' for x in more)
     return f'''<!doctype html>
 <html lang="{lang}" dir="{t['dir']}">
 <head>
@@ -76,11 +82,9 @@ def head(lang, page, title, desc):
 <link rel="icon" type="image/png" sizes="32x32" href="{d}assets/img/favicon-32.png">
 <link rel="apple-touch-icon" href="{d}assets/img/apple-touch-icon.png">
 <link rel="manifest" href="{d}site.webmanifest">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="{fonts}">
+{preload}
 <link rel="stylesheet" href="{d}assets/css/site.css?v={ver('assets/css/site.css')}">
-<script type="application/ld+json">{json.dumps(ld, ensure_ascii=False)}</script>
+<script type="application/ld+json">{json.dumps(ld, ensure_ascii=False)}</script>{ld_more}
 </head>
 <body>
 <a class="skip" href="#main">{t['skip']}</a>'''
@@ -153,10 +157,10 @@ def home(lang):
     opts = "".join(f"<option>{e(o)}</option>" for o in t["f_opts"])
     data_attrs = f'data-title="{e(t["f_title"])}" ' + " ".join(f'data-l{k}="{e(v)}"' for k, v in [("nom",f["nom"]),("soc",f["societe"]),("tel",f["tel"]),("besoin",f["besoin"]),("lieu",f["lieu"]),("duree",f["duree"]),("details",f["details"])])
     gal = "".join(f'<figure class="gal-it"><img src="{d}assets/media/{g}.webp" width="1200" height="750" alt="{e(m["caps"][g])}" loading="lazy" decoding="async"><figcaption>{e(m["caps"][g])}</figcaption></figure>' for g in GALLERY)
-    creds = "".join(f'<li><a href="{u}" rel="noopener" target="_blank">{e(n)}</a> — {e(a)} — ' + (f'<a href="{lu}" rel="noopener" target="_blank">{e(l)}</a>' if lu else e(l)) + '</li>' for n, u, a, l, lu in PHOTO_CREDITS)
+    creds = "".join(f'<li><a href="{u}" rel="noopener" target="_blank">{e(n)}</a> · {e(a)} · ' + (f'<a href="{lu}" rel="noopener" target="_blank">{e(l)}</a>' if lu else e(l)) + '</li>' for n, u, a, l, lu in PHOTO_CREDITS)
     body = f'''{header(lang,"")}
 <main id="main">
-<section class="hero"><video class="hero-vid" autoplay muted loop playsinline preload="metadata" poster="{d}assets/media/hero-poster.jpg" aria-label="{e(MEDIA[lang]['video_alt'])}"><source src="{d}assets/media/hero-480.mp4" type="video/mp4" media="(max-width: 700px)"><source src="{d}assets/media/hero-720.mp4" type="video/mp4"></video><div class="wrap">
+<section class="hero"><video class="hero-vid" autoplay muted loop playsinline preload="metadata" poster="{d}assets/media/hero-poster.jpg" aria-label="{e(MEDIA[lang]['video_alt'])}"><source src="{d}assets/media/hero-480.mp4" type="video/mp4" media="(max-width: 700px)"><source src="{d}assets/media/hero-720.mp4" type="video/mp4" media="(max-width: 1280px)"><source src="{d}assets/media/hero-1080.mp4" type="video/mp4"></video><div class="wrap">
 <span class="tag">{e(t['tag'])}</span>
 <h1>{t['h1']}</h1>
 <p class="lead">{e(t['lead'])}</p>
@@ -286,6 +290,9 @@ def fam_page(lang, k):
     terms = "".join(f"<li>{e(x)}</li>" for x in f["terms"])
     import urllib.parse
     wa = "https://wa.me/" + WA + "?text=" + urllib.parse.quote(f["wa"] + fm["t"])
+    faqs = fm["faq"] + f["faq_common"]
+    faq_html = "".join(f'<details class="faq"><summary>{e(q)}</summary><p>{e(a)}</p></details>' for q, a in faqs)
+    faq_ld = {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":q,"acceptedAnswer":{"@type":"Answer","text":a}} for q, a in faqs]}
     others = "".join(f'<a class="fam-chip" href="{o}.html">{icon(FAM_ICON[o])}{e(f["fam"][o]["short"])}</a>' for o in FAM_ORDER if o != k)
     body = f'''{header(lang,page)}
 <main id="main">
@@ -307,12 +314,13 @@ def fam_page(lang, k):
 <div class="card"><h3>{e(f["terms_h"])}</h3><ul class="chk">{terms}</ul></div>
 </div></section>
 <section class="sec-alt"><div class="wrap">
+<div class="sec-head"><h2>{e(f["faq_h"])}</h2></div><div class="faqs">{faq_html}</div>
 <div class="card dark cta-row"><div><h3>{e(f["cta_h"])}</h3><p style="margin:0">{e(f["cta_p"])}</p></div><a class="btn btn-amber" href="{wa}" target="_blank" rel="noopener">{icon('wa')} {e(t['cta_wa'])}</a></div>
 <div class="fam-other">{others}<a class="fam-chip" href="materiel.html">{e(f["all"])}</a></div>
 </div></section>
 </main>
 {footer(lang,page)}'''
-    return head(lang, page, fm["title"], fm["desc"]) + "\n" + body
+    return head(lang, page, fm["title"], fm["desc"], [faq_ld]) + "\n" + body
 
 def qualif_page(lang):
     t = T[lang]; q = F[lang]["q"]; d = depth(lang); page = "qualification.html"
@@ -346,7 +354,16 @@ def notfound():
     h = h.replace('<link rel="canonical"', '<meta name="robots" content="noindex"><link rel="canonical"')
     return h + f'\n<main id="main"><section><div class="wrap"><p style="text-align:center;margin-bottom:24px"><a href="/"><img src="/assets/img/logo-260.png" width="200" alt="ETPBH MAROUANE" style="margin:auto"></a></p><div class="grid g3">{blocks}</div></div></section></main></body></html>'
 
+import re as _re
+_LINK = _re.compile(r'((?:href|content)=")((?:https://etpbh-marouane\.dz/)?(?:\.\./|\./)?(?:[a-z]{2}/)?)([a-z0-9-]+)\.html((?:#[^"]*)?")')
+def sans_ext(m):
+    name = m.group(3)
+    if name == "index": return m.group(1) + (m.group(2) or "./") + m.group(4)
+    if name == "404": return m.group(0)
+    return m.group(1) + m.group(2) + name + m.group(4)
 def write(rel, content):
+    if rel.endswith(".html") and not rel.endswith("404.html"):
+        content = _LINK.sub(sans_ext, content)
     p = os.path.join(OUT, rel); os.makedirs(os.path.dirname(p) or OUT, exist_ok=True)
     open(p, "w", encoding="utf-8").write(content)
 
@@ -376,11 +393,27 @@ RewriteRule ^(.*)$ https://etpbh-marouane.dz/$1 [R=301,L]
 RewriteCond %{HTTPS} off
 RewriteCond %{HTTP:X-Forwarded-Proto} !https
 RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+# Aucune URL ne finit par index.html ni par .html (convention profitpilot.dz)
+RewriteCond %{THE_REQUEST} \\s/+([^\\s?]*/)?index\\.html(?:\\?[^\\s]*)?\\s [NC]
+RewriteRule ^ /%1 [R=301,L,NE]
+RewriteCond %{THE_REQUEST} \\s/+([^\\s?]+)\\.html(?:\\?[^\\s]*)?\\s [NC]
+RewriteCond %1 !(^|/)(index|404)$
+RewriteRule ^ /%1 [R=301,L,NE]
+# Sert /x en lisant x.html (réécriture interne)
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME}.html -f
+RewriteRule ^(.+)$ $1.html [L]
+AddType font/woff2 .woff2
+AddType video/mp4 .mp4
 <IfModule mod_headers.c>
   Header set X-Content-Type-Options "nosniff"
   Header set Referrer-Policy "strict-origin-when-cross-origin"
-  <FilesMatch "\\.(css|js|webp|png|jpg|ico|svg)$">
+  <FilesMatch "\\.(css|js|woff2|ico)$">
     Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <FilesMatch "\\.(webp|png|jpg|svg|mp4)$">
+    Header set Cache-Control "public, max-age=604800"
   </FilesMatch>
   <FilesMatch "\\.html$">
     Header set Cache-Control "public, max-age=600"

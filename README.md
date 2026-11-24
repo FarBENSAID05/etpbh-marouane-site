@@ -12,4 +12,9 @@ Site statique de l'EURL ETPBH MAROUANE — français à la racine, `ar/`, `en/`.
     git commit -m "Mise à jour du site"
     git push
 
-Puis hPanel → Sites web → etpbh-marouane.dz → Avancé → Git → « Redéployer ».
+git subtree push --prefix public_html origin deploy
+
+La branche `deploy` ne contient que le contenu de public_html/ : c'est elle que Hostinger publie
+(hPanel → Sites web → etpbh-marouane.dz → Avancé → Git, branche `deploy`). La branche `main` garde
+les sources (_build/) et n'est pas publiée. Hostinger redéploie tout seul après le push ; sinon
+cliquer « Redéployer » dans hPanel.

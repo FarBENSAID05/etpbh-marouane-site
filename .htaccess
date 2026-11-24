@@ -1,0 +1,13 @@
+# ETPBH MAROUANE — racine du DÉPÔT (branche main déployée par Hostinger dans public_html du serveur).
+# Le site vit dans le sous-dossier public_html/ : on y redirige tout, sans changer l'URL.
+Options -Indexes
+RewriteEngine On
+# Les sources du dépôt ne sont jamais servies
+RewriteRule ^(_build|\.git)(/|$) - [F,L]
+RewriteRule ^(README\.md|\.gitignore|\.htaccess)$ - [F,L]
+# Une URL qui contiendrait /public_html/ est renvoyée vers l'URL propre
+RewriteCond %{THE_REQUEST} \s/+public_html/([^\s?]*) [NC]
+RewriteRule ^ /%1 [R=301,L,NE]
+# Tout le reste est lu dans public_html/ (réécriture interne)
+RewriteCond %{REQUEST_URI} !^/public_html/
+RewriteRule ^(.*)$ public_html/$1 [L]

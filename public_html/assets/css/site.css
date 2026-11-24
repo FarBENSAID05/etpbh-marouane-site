@@ -208,7 +208,7 @@ html[lang="ar"] .ftr h3{text-transform:none;letter-spacing:0}
   .wa-float{width:54px;height:54px}
 }
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
-@media print{.hdr,.wa-float,.hero .road,form.devis{display:none}}
+@media print{.hdr,.wa-float,.hero .road,form.devis,.devis-tally{display:none}}
 
 /* --- médias --- */
 .hero-vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
@@ -301,3 +301,11 @@ ul.chk li::before{content:"";position:absolute;inset-inline-start:0;top:.45em;wi
 .faq summary::after{content:"+";float:inline-end;color:var(--amber-d);font-weight:700}
 .faq[open] summary::after{content:"–"}
 .faq p{margin:10px 0 0;color:var(--muted)}
+
+/* Formulaire Tally intégré (contact) */
+.devis-tally{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow)}
+.devis-tally iframe{display:block;width:100%;min-height:520px;border:0}
+.devis-tally .acts{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.btn-ghost-d{border-color:var(--line);color:var(--text)}
+.btn-ghost-d:hover{background:rgba(0,0,0,.04)}
+.card.dark .ctas,.cta-row .ctas{display:flex;gap:10px;flex-wrap:wrap}

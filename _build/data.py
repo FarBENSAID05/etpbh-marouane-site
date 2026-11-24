@@ -8,6 +8,10 @@ WA = "213661348273"
 EMAIL = "marouanlatelli@gmail.com"   # à remplacer par contact@etpbh-marouane.dz quand le MX sera en place
 DOMAIN = "https://etpbh-marouane.dz"
 
+# Formulaires Tally « Demande de devis » (compte Tally de Farouk, créés le 24/11/2026)
+TALLY = {"fr": "zE7g2a", "ar": "gb9gJl", "en": "EqxANX"}
+def tally(lang): return "https://tally.so/r/" + TALLY[lang]
+
 # Désignations (fr, ar, en)
 D = {
  "grue":      ("Grue mobile tout-terrain", "رافعة متنقلة لكل التضاريس", "All-terrain mobile crane"),

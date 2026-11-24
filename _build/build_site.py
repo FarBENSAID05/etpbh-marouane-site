@@ -111,7 +111,7 @@ def header(lang, page):
 <a class="brand" href="./" aria-label="ETPBH MAROUANE — {e(t['home'])}"><picture><source srcset="{d}assets/img/logo-260.webp" type="image/webp"><img src="{d}assets/img/logo-260.png" width="260" height="144" alt="ETPBH MAROUANE"></picture></a>
 <nav class="nav" id="nav" aria-label="Navigation">{''.join(links)}</nav>
 <div class="langs">{''.join(langs)}</div>
-<a class="btn btn-amber hide-m" href="https://wa.me/{WA}" target="_blank" rel="noopener">{e(t['cta'])}</a>
+<a class="btn btn-amber hide-m" href="{tally(lang)}" target="_blank" rel="noopener">{e(t['cta'])}</a>
 <button class="menu-btn" aria-controls="nav" aria-expanded="false" aria-label="{e(t['menu'])}">{icon('menu')}</button>
 </div></header>'''
 
@@ -164,7 +164,7 @@ def home(lang):
 <span class="tag">{e(t['tag'])}</span>
 <h1>{t['h1']}</h1>
 <p class="lead">{e(t['lead'])}</p>
-<div class="ctas"><a class="btn btn-amber" href="https://wa.me/{WA}" target="_blank" rel="noopener">{icon('wa')} {e(t['cta_wa'])}</a><a class="btn btn-ghost" href="materiel.html">{e(t['see_fleet'])}</a></div>
+<div class="ctas"><a class="btn btn-amber" href="{tally(lang)}" target="_blank" rel="noopener">{e(t['cta'])}</a><a class="btn btn-ghost" href="https://wa.me/{WA}" target="_blank" rel="noopener">{icon('wa')} {e(t['cta_wa'])}</a><a class="btn btn-ghost" href="materiel.html">{e(t['see_fleet'])}</a></div>
 </div>{ROAD}</section>
 <div class="stats"><div class="wrap"><ul>{stats}</ul></div></div>
 
@@ -210,17 +210,12 @@ def home(lang):
 <li>{icon('mail')}<div>{e(t['c_mail'])}<br><a href="mailto:{EMAIL}">{EMAIL}</a></div></li>
 <li>{icon('pin')}<div>{e(t['c_addr'])}<br>{e(t['q_cards'][0][1])}</div></li>
 </ul><p><b>{e(t['c_contact'])}</b></p></div>
-<form class="devis" novalidate {data_attrs}>
-<div class="row"><div class="f"><label for="f-nom">{e(f['nom'])}</label><input id="f-nom" name="nom" required autocomplete="name"></div>
-<div class="f"><label for="f-soc">{e(f['societe'])}</label><input id="f-soc" name="societe" autocomplete="organization"></div></div>
-<div class="row"><div class="f"><label for="f-tel">{e(f['tel'])}</label><input id="f-tel" name="tel" type="tel" required autocomplete="tel" inputmode="tel"></div>
-<div class="f"><label for="f-besoin">{e(f['besoin'])}</label><select id="f-besoin" name="besoin" required><option value="">{e(t['f_choose'])}</option>{opts}</select></div></div>
-<div class="row"><div class="f"><label for="f-lieu">{e(f['lieu'])}</label><input id="f-lieu" name="lieu"></div>
-<div class="f"><label for="f-duree">{e(f['duree'])}</label><input id="f-duree" name="duree"></div></div>
-<div class="f"><label for="f-det">{e(f['details'])}</label><textarea id="f-det" name="details"></textarea></div>
-<div class="acts"><button class="btn btn-amber" type="submit">{icon('wa')} {e(t['f_send'])}</button><button class="btn btn-dark" type="button" data-mail>{icon('mail')} {e(t['f_mail'])}</button></div>
-<p class="note">{e(t['f_note'])}</p>
-</form>
+<div class="devis devis-tally">
+<iframe src="https://tally.so/embed/{TALLY[lang]}?alignLeft=1&amp;hideTitle=1&amp;transparentBackground=1&amp;dynamicHeight=1" loading="lazy" width="100%" height="760" frameborder="0" marginheight="0" marginwidth="0" title="{e(t['f_title'])}"></iframe>
+<noscript><p><a class="btn btn-amber" href="{tally(lang)}">{e(t['cta'])}</a></p></noscript>
+<div class="acts"><a class="btn btn-dark" href="https://wa.me/{WA}" target="_blank" rel="noopener">{icon('wa')} {e(t['cta_wa'])}</a><a class="btn btn-ghost-d" href="{tally(lang)}" target="_blank" rel="noopener">{e(t['f_open'])}</a></div>
+</div>
+<script async src="https://tally.so/widgets/embed.js"></script>
 </div></section>
 </main>
 {footer(lang,"")}'''
@@ -255,7 +250,7 @@ def materiel(lang):
 <div class="fleet-sec"><div class="fleet-h"><div><h2>{e(t['C_h'])}</h2><p>{e(t['C_p'])}</p></div></div>
 <table class="tbl"><thead><tr>{th(thC)}</tr></thead><tbody>{rowsC}</tbody></table>
 <p class="legend"><b>{e(t['total_C'])}</b></p></div>
-<div class="card dark" style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap"><div><h3>{e(t['mat_cta_h'])}</h3><p style="margin:0">{e(t['mat_cta_p'])}</p></div><a class="btn btn-amber" href="https://wa.me/{WA}" target="_blank" rel="noopener">{icon('wa')} {e(t['cta_wa'])}</a></div>
+<div class="card dark" style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap"><div><h3>{e(t['mat_cta_h'])}</h3><p style="margin:0">{e(t['mat_cta_p'])}</p></div><div class="ctas"><a class="btn btn-amber" href="{tally(lang)}" target="_blank" rel="noopener">{e(t['cta'])}</a><a class="btn btn-ghost" href="https://wa.me/{WA}" target="_blank" rel="noopener">{icon('wa')} {e(t['cta_wa'])}</a></div></div>
 </div></section>
 </main>
 {footer(lang,"materiel.html")}'''
@@ -299,7 +294,7 @@ def fam_page(lang, k):
 <section class="fam-hero" style="background-image:linear-gradient(90deg,rgba(20,21,20,.9),rgba(20,21,20,.45)),url({d}assets/media/parc/{k}-hero.webp)"><div class="wrap">
 <span class="kicker" style="color:var(--amber)">{e(f["menu"])}</span>
 <h1>{e(fm["t"])}</h1><p class="lead">{e(fm["lead"])}</p>
-<div class="ctas"><a class="btn btn-amber" href="{wa}" target="_blank" rel="noopener">{icon('wa')} {e(t['cta_wa'])}</a><a class="btn btn-ghost" href="#detail">{e(f["list_h"])}</a></div>
+<div class="ctas"><a class="btn btn-amber" href="{tally(lang)}" target="_blank" rel="noopener">{e(t['cta'])}</a><a class="btn btn-ghost" href="{wa}" target="_blank" rel="noopener">{icon('wa')} {e(t['cta_wa'])}</a><a class="btn btn-ghost" href="#detail">{e(f["list_h"])}</a></div>
 </div></section>
 <div class="stats"><div class="wrap"><ul class="s{3 + (1 if n_mob else 0)}">{stats}</ul></div></div>
 <section><div class="wrap"><div class="pg pg-{len(FAM_GAL[k])}">{gal}</div><p class="gal-note">{e(f["photo_note"])}</p></div></section>
@@ -315,7 +310,7 @@ def fam_page(lang, k):
 </div></section>
 <section class="sec-alt"><div class="wrap">
 <div class="sec-head"><h2>{e(f["faq_h"])}</h2></div><div class="faqs">{faq_html}</div>
-<div class="card dark cta-row"><div><h3>{e(f["cta_h"])}</h3><p style="margin:0">{e(f["cta_p"])}</p></div><a class="btn btn-amber" href="{wa}" target="_blank" rel="noopener">{icon('wa')} {e(t['cta_wa'])}</a></div>
+<div class="card dark cta-row"><div><h3>{e(f["cta_h"])}</h3><p style="margin:0">{e(f["cta_p"])}</p></div><div class="ctas"><a class="btn btn-amber" href="{tally(lang)}" target="_blank" rel="noopener">{e(t['cta'])}</a><a class="btn btn-ghost" href="{wa}" target="_blank" rel="noopener">{icon('wa')} {e(t['cta_wa'])}</a></div></div>
 <div class="fam-other">{others}<a class="fam-chip" href="materiel.html">{e(f["all"])}</a></div>
 </div></section>
 </main>

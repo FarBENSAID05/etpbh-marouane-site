@@ -6,6 +6,9 @@ PHONE = "0661 34 82 73"
 PHONE_INTL = "+213661348273"
 WA = "213661348273"
 EMAIL = "contact@etpbh-marouane.dz"
+# Interlocuteurs par département (site : section Contact et pied de page)
+DEPTS = [("loc", [("+213558540506", "0558 54 05 06"), ("+213660447066", "0660 44 70 66")]),
+         ("tp",  [("+213550690888", "0550 69 08 88")])]
 DOMAIN = "https://etpbh-marouane.dz"
 
 # Formulaires Tally « Demande de devis » (compte Tally de Farouk, créés le 24/11/2026)

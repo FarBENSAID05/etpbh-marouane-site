@@ -56,6 +56,7 @@ FAM_FIG = {
 
 T2 = {
 "fr": {
+ "dept":{"loc":("Location d'engins","Adel DRISSI, directeur technique"),"tp":("Travaux publics","Madani LATELLI, gérant")},
  "stats":[("280 <small>t</small>","grues mobilisables jusqu'à"),("48–72 <small>h</small>","délai de mobilisation"),("IV","catégorie de qualification TP"),("4","familles d'engins à louer")],
  "svc_txt":{
   "crane":"Grues tout-terrain et camions-grues de 50 à 280 t, livrés avec leur opérateur. Les plus grosses capacités se réservent quelques jours à l'avance.",
@@ -94,6 +95,7 @@ T2 = {
              "Monter en catégorie de qualification pour accéder à des marchés plus importants."],
 },
 "ar": {
+ "dept":{"loc":("كراء الآليات","عادل دريسي، المدير التقني"),"tp":("الأشغال العمومية","لعطلي المداني، المسيّر")},
  "stats":[("280 <small>طن</small>","رافعات يمكن تعبئتها حتى"),("48–72 <small>ساعة</small>","أجل تعبئة العتاد"),("IV","صنف التأهيل في الأشغال العمومية"),("4","عائلات من الآليات للكراء")],
  "svc_txt":{
   "crane":"رافعات لكل التضاريس وشاحنات رافعة من 50 إلى 280 طن، تصلك مع مشغّلها. الحمولات الكبرى تُحجز قبل أيام.",
@@ -130,6 +132,7 @@ T2 = {
              "أن نرتقي في صنف التأهيل لنصل إلى صفقات أكبر."],
 },
 "en": {
+ "dept":{"loc":("Equipment hire","Adel DRISSI, technical director"),"tp":("Public works","Madani LATELLI, managing director")},
  "stats":[("280 <small>t</small>","cranes available up to"),("48–72 <small>h</small>","mobilisation time"),("IV","public-works qualification class"),("4","equipment families for hire")],
  "svc_txt":{
   "crane":"All-terrain cranes and truck cranes from 50 to 280 t, delivered with their operator. The largest capacities are booked a few days ahead.",
@@ -223,7 +226,7 @@ def appliquer(T, F):
     """Écrit les textes v2 dans les dictionnaires T (strings.py) et F (families.py)."""
     for l in ("fr", "ar", "en"):
         t, n = T[l], T2[l]
-        for k in ("stats", "fleet_k", "fleet_h", "fleet_p", "fleet_cards", "fleet_btn", "title_mat", "desc_mat", "mat_h1", "mat_lead"):
+        for k in ("dept", "stats", "fleet_k", "fleet_h", "fleet_p", "fleet_cards", "fleet_btn", "title_mat", "desc_mat", "mat_h1", "mat_lead"):
             t[k] = n[k]
         t["svc"] = [(k, h, n["svc_txt"].get(k, p), li) for k, h, p, li in t["svc"]]
         t["ref_main"] = [(t["ref_main"][0][0], n["ref_crbc"]), (t["ref_main"][1][0], n["ref_cccc"])]

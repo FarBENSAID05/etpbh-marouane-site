@@ -32,6 +32,17 @@ ICONS = {
  "wa":'<path d="M4 20l1.3-4A8 8 0 1112 20a8 8 0 01-4-1.1z"/><path d="M9 9c0 3 2.5 5.5 5.5 5.5l1-1.5-2-1-1 1c-1-.4-2-1.4-2.4-2.4l1-1-1-2z"/>',
  "menu":'<path d="M4 7h16M4 12h16M4 17h16"/>',
 }
+def dept_list(t):
+    """Section Contact : un interlocuteur et ses numéros par département."""
+    out = []
+    for k, nums in DEPTS:
+        tels = " · ".join('<a href="tel:%s" class="num">%s</a>' % (i, n) for i, n in nums)
+        out.append('<li>%s<div><b>%s</b> · %s<br>%s</div></li>' % (icon("phone"), e(t["dept"][k][0]), e(t["dept"][k][1]), tels))
+    return "".join(out)
+
+def dept_foot(t):
+    return "".join('<li>%s : <a href="tel:%s" class="num">%s</a></li>' % (e(t["dept"][k][0]), nums[0][0], nums[0][1]) for k, nums in DEPTS)
+
 def statval(v):
     """Chiffre + unité : seul le chiffre est isolé en LTR, l'unité suit le sens de la page."""
     import re as _r
@@ -147,7 +158,7 @@ def footer(lang, page):
 <div><span class="logo-w"><img src="{d}assets/img/logo-260.png" width="260" height="144" alt="ETPBH MAROUANE"></span><p>{e(t['ft_about'])}</p></div>
 <div><h3>{e(t['ft_links'])}</h3><ul>{nav}</ul></div>
 <div><h3>{e(t['ft_contact'])}</h3><ul>
-<li><a href="tel:{PHONE_INTL}" class="num">{PHONE}</a></li>
+{dept_foot(t)}
 <li><a href="https://wa.me/{WA}" target="_blank" rel="noopener">WhatsApp</a></li>
 <li><a href="mailto:{EMAIL}">{EMAIL}</a></li></ul></div>
 </div>
@@ -240,11 +251,11 @@ def home(lang):
 <section id="contact"><div class="wrap contact">
 <div><span class="kicker">{e(t['c_k'])}</span><h2>{e(t['c_h'])}</h2><p>{e(t['c_p'])}</p>
 <ul class="c-list">
-<li>{icon('phone')}<div>{e(t['c_tel'])}<br><a href="tel:{PHONE_INTL}" class="num">{PHONE}</a></div></li>
+{dept_list(t)}
 <li>{icon('wa')}<div>{e(t['c_wa'])}<br><a href="https://wa.me/{WA}" target="_blank" rel="noopener" class="num">{PHONE}</a></div></li>
 <li>{icon('mail')}<div>{e(t['c_mail'])}<br><a href="mailto:{EMAIL}">{EMAIL}</a></div></li>
 <li>{icon('pin')}<div>{e(t['c_addr'])}<br>{e(t['q_cards'][0][1])}</div></li>
-</ul><p><b>{e(t['c_contact'])}</b></p></div>
+</ul></div>
 <div class="devis devis-tally">
 <iframe src="https://tally.so/embed/{TALLY[lang]}?alignLeft=1&amp;hideTitle=1&amp;transparentBackground=1&amp;dynamicHeight=1" loading="lazy" width="100%" height="760" frameborder="0" marginheight="0" marginwidth="0" title="{e(t['f_title'])}"></iframe>
 <noscript><p><a class="btn btn-amber" href="{tally(lang)}">{e(t['cta'])}</a></p></noscript>

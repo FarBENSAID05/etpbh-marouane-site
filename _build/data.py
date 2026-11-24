@@ -5,7 +5,7 @@ et Fiche_signaletique_ETPBH_MAROUANE.docx (dossier « Prospection grands comptes
 PHONE = "0661 34 82 73"
 PHONE_INTL = "+213661348273"
 WA = "213661348273"
-EMAIL = "marouanlatelli@gmail.com"   # à remplacer par contact@etpbh-marouane.dz quand le MX sera en place
+EMAIL = "contact@etpbh-marouane.dz"
 DOMAIN = "https://etpbh-marouane.dz"
 
 # Formulaires Tally « Demande de devis » (compte Tally de Farouk, créés le 24/11/2026)

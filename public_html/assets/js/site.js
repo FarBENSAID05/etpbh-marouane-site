@@ -15,7 +15,7 @@
   var form = document.querySelector('form.devis');
   if (!form) return;
   var WA = '213661348273';
-  var MAIL = 'marouanlatelli@gmail.com';
+  var MAIL = 'contact@etpbh-marouane.dz';
 
   function message() {
     var L = form.dataset;

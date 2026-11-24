@@ -355,3 +355,15 @@ html[data-theme="dark"] .ftr{border-top:1px solid var(--line)}
 /* Bandeau de chiffres à 3 cases (pages engins) */
 @media (max-width:1020px){.stats ul.s3 li:nth-child(3){border-inline-start:1px solid var(--line);border-top:0}}
 @media (max-width:640px){.stats ul.s3{grid-template-columns:1fr 1fr}.stats ul.s3 li:nth-child(3){grid-column:1/-1;border-inline-start:0;border-top:1px solid var(--line)}}
+/* v2 : grands projets, vision, catalogue */
+.vision{display:grid;grid-template-columns:1.2fr 1fr;gap:28px;align-items:start}
+.vision p{color:var(--muted);font-size:1.05rem}
+.vision .card.dark ul.chk li{color:#E7E6E1}
+.card.pj .ico svg{stroke:var(--ink)}
+.u-n svg{width:26px;height:26px}
+.unit .pill{margin-top:2px}
+.fleet-h h2{display:flex;align-items:center;gap:10px;margin:0}
+.fam-ico{width:30px;height:30px;stroke:var(--amber-d);flex:none}
+@media (max-width:1020px){.vision{grid-template-columns:1fr}}
+.unit .pill{white-space:normal}.unit>div{min-width:0}
+@media (max-width:640px){.tbl td.cat{display:block;padding-top:8px}}
